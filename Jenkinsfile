@@ -22,11 +22,22 @@ pipeline {
             }
         }
 
-        stage('Generate Coverage Report') {
+        stage('Generate Coverage Report') 
+        {
             steps {
                 bat 'npm run coverage || exit /b 0'
             }
         }
+        stage('SonarCloud Analysis') {
+    steps {
+        withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
+            bat '''
+            npm install -g sonar-scanner
+            sonar-scanner
+            '''
+        }
+    }
+}
 
         stage('NPM Audit Security Scan') {
             steps {
